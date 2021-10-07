@@ -15,6 +15,32 @@ const NoChannel: React.FC = () => (
   </div>
 )
 
+const Message: React.FC<{ avatar: string, username: string, date: number, color?: string, message: string }> = (s: { avatar: string, username: string, date: number, color?: string, message?: string }) => {
+  const date = new Date(s.date)
+
+  return (
+    <div id="message">
+      <div className="info">
+        <img src={s.avatar} alt={s.username} className="avatar" />
+        <div className="content">
+          <div className="user-info">
+            <h3 style={s.color ? { color: s.color } : {}}>{s.username}</h3>
+            <p className="date">{date.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric', 
+            })} {date.toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute:'2-digit', 
+            })}</p>
+          </div>
+          <pre className="message">{s.message}</pre>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const ActualChannel: React.FC<{ channel: string }> = (s: { channel: string }) => {
   const ref = React.useRef<HTMLDivElement>()
 
@@ -25,6 +51,7 @@ const ActualChannel: React.FC<{ channel: string }> = (s: { channel: string }) =>
       event.stopPropagation()
 
       console.log([event.currentTarget.innerText])
+      ref.current.innerText = ""
     }
   }
 
@@ -41,7 +68,13 @@ const ActualChannel: React.FC<{ channel: string }> = (s: { channel: string }) =>
         <h3>{s.channel}</h3>
       </div>
       <div className="textarea">
-        <p>beans</p>
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message={`Test\nMessage`} date={Date.now()} color="#ff69b4" />
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message="Test Message" date={Date.now()} color="#ff69b4" />
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message="Test Message" date={Date.now()} color="#ff69b4" />
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message="Test Message" date={Date.now()} color="#ff69b4" />
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message="Test Message" date={Date.now()} color="#ff69b4" />
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message="Test Message" date={Date.now()} color="#ff69b4" />
+        <Message username="Nobu" avatar="https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000" message="Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message Some super long test message " date={Date.now()} color="#ff69b4" />
       </div>
       <div className="textbar">
         <div className="textbar-content">

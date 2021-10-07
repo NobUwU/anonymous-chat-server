@@ -1,5 +1,6 @@
 #channel {
   height: 100vh;
+  // max-width: 100%;
   div.nochannel {
     height: 80%;
     display: flex;
@@ -23,8 +24,9 @@
   }
   #actual-channel {
     // overflow: scroll !important;
-    position: relative;
+    // position: relative;
     height: 100vh;
+    width: 100%;
     display: flex;
     flex-direction: column;
     // padding: 5px ;
@@ -32,12 +34,56 @@
       padding: 1rem;
       overflow-y: scroll;
       height: 100%;
-      width: 100%;
+      // max-width: 100%;
       display: flex;
       flex-direction: column-reverse;
-      // :first-child {
-      //   // padding-bottom: 0.2rem;
-      // }
+      gap: 1rem;
+      #message {
+        // position: relative;
+        // max-width: 100%;
+        // word-wrap: break-word;
+        // word-break: break-word;
+        overflow-x: hidden;
+        .info {
+          display: flex;
+          flex-direction: row;
+          // align-items: center;
+          gap: 0.8rem;
+          .avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            clip-path: circle();
+          }
+          .content {
+            // max-width: 100%;
+            .user-info {
+              display: flex;
+              flex-direction: row;
+              align-items: flex-end;
+              gap: 0.3rem;
+              h3 {
+                font-weight: 100;
+                font-size: 1.1rem;
+                margin-top: 0.2rem;
+              }
+              p {
+                word-wrap: break-word;
+                word-break: break-word;
+                margin-bottom: 1px;
+                font-size: 0.7rem;
+                color: #6d6d6d;
+              }
+            }
+            pre {
+              font-family: 'Chivo';
+              color: #d4d4d4;
+              font-weight: 100;
+              font-size: 0.9rem;
+              margin-top: 0.2rem;
+            }
+          }
+        }
+      }
     }
     .header {
       // position: fixed;
@@ -51,7 +97,7 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      // justify-content: flex-start;
+      justify-content: flex-start;
       gap: 0.5rem;
       svg {
         width: 1.6rem;
@@ -60,7 +106,7 @@
       }
       h3 {
         font-weight: 200;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.05rem;
       }
     }
     .textbar {
@@ -110,11 +156,12 @@
           }
         }
         #textarea {
+          align-self: center;
           user-select: none;
           overflow-y: scroll;
           // background-color: red;
           // max-width: 100%;
-          padding: 0.8rem;
+          padding: 0.85rem;
           outline: none;
           width: 100%;
           min-height: 2.8rem;
@@ -123,6 +170,8 @@
           word-break: break-word;
           // font-family: 'ChivoLight';
           font-weight: 200;
+          font-size: 0.85rem;
+          color: #d4d4d4;
         }
       }
     }
