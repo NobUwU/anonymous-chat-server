@@ -104,7 +104,7 @@ const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
 }
 
 const Home: FC = () => {
-  const [l, setL] = useState<boolean>(true)
+  const [l, setL] = useState<boolean>(false)
 
   const loading = useRef<HTMLDivElement>()
   useEffect(() => {
