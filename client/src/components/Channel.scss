@@ -1,7 +1,8 @@
 #channel {
   height: 100vh;
-  // max-width: 100%;
+  width: 100%;
   div.nochannel {
+    user-select: none;
     height: 80%;
     display: flex;
     align-items: center;
@@ -26,7 +27,7 @@
     // overflow: scroll !important;
     // position: relative;
     height: 100vh;
-    width: 100%;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     // padding: 5px ;
@@ -34,28 +35,33 @@
       padding: 1rem;
       overflow-y: scroll;
       height: 100%;
-      // max-width: 100%;
+      width: 100%;
       display: flex;
       flex-direction: column-reverse;
       gap: 1rem;
       #message {
-        // position: relative;
-        // max-width: 100%;
-        // word-wrap: break-word;
-        // word-break: break-word;
-        overflow-x: hidden;
+        // overflow: hidden;
         .info {
+          overflow: hidden;
           display: flex;
           flex-direction: row;
-          // align-items: center;
           gap: 0.8rem;
           .avatar {
-            width: 2.5rem;
-            height: 2.5rem;
+            user-select: none;
+            min-width: 2.5rem;
+            max-width: 2.5rem;
+            min-height: 2.5rem;
+            max-height: 2.5rem;
             clip-path: circle();
+            img {
+              min-width: 2.5rem;
+              max-width: 2.5rem;
+              min-height: 2.5rem;
+              max-height: 2.5rem;
+            }
           }
           .content {
-            // max-width: 100%;
+            max-width: 100%;
             .user-info {
               display: flex;
               flex-direction: row;
@@ -67,6 +73,7 @@
                 margin-top: 0.2rem;
               }
               p {
+                // max-width: 20%;
                 word-wrap: break-word;
                 word-break: break-word;
                 margin-bottom: 1px;
@@ -74,18 +81,21 @@
                 color: #6d6d6d;
               }
             }
-            pre {
-              font-family: 'Chivo';
-              color: #d4d4d4;
-              font-weight: 100;
-              font-size: 0.9rem;
+            .message {
               margin-top: 0.2rem;
+              p {
+                font-family: 'Chivo';
+                color: #d4d4d4;
+                font-weight: 100;
+                font-size: 0.9rem;
+              }
             }
           }
         }
       }
     }
     .header {
+      user-select: none;
       // position: fixed;
       width: 100%;
       height: 3.5rem;

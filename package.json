@@ -26,9 +26,13 @@
   },
   "homepage": "https://github.com/NobUwU/react-webpack-boilerplate-server#readme",
   "dependencies": {
+    "@animiru/singularity": "^1.0.0",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "localforage": "^1.10.0",
+    "recoil": "^0.4.1",
+    "ws": "^8.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
@@ -45,8 +49,10 @@
     "@types/react": "^17.0.11",
     "@types/react-dom": "^17.0.8",
     "@types/react-router-dom": "^5.1.7",
+    "@types/recoil": "^0.0.9",
     "@types/validator": "^13.6.3",
     "@types/webpack": "^5.28.0",
+    "@types/ws": "^8.2.0",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
     "babel-eslint": "^10.1.0",
@@ -71,6 +77,6 @@
     "typescript": "^4.3.4",
     "webpack": "^5.40.0",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^4.3.1"
   }
 }

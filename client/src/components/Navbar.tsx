@@ -1,27 +1,28 @@
 import React, {
   FC,
-  useState,
-  useRef,
-  useEffect,
 } from 'react'
 import {
   useLocation,
   useHistory,
 } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
+import { channelsSelector } from '../state/index'
 import { Hash } from '../components/icons/hash'
+import { Channel as RestChannel } from '../types/index'
 import "./Navbar.scss"
 
-const Navbar: FC<{ channels: string[] }> = (s: { channels: string[] }) => {
+const Navbar: FC = () => {
+  const channels = useRecoilValue(channelsSelector)
   const location = useLocation()
   const history = useHistory()
 
   return (
     <div id="navbar">
       {
-        s.channels.map((channel, i) => (
-          <div key={i} className={`channel ${location.hash?.replace(/#/g, "") === channel ? "highlight" : ""}`} onClick={() => history.push(`#${channel}`)}>
+        channels.map((channel) => (
+          <div key={channel.id} className={`channel ${location.hash?.replace(/#/g, "") === channel.id ? "highlight" : ""}`} onClick={() => history.push(`#${channel.id}`)}>
             <Hash />
-            <p>{channel}</p>
+            <p>{channel.name}</p>
           </div>
         ))
       }

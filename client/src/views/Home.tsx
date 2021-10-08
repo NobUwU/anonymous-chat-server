@@ -4,6 +4,14 @@ import React, {
   useRef,
   useEffect,
 } from 'react'
+import {
+  channelsState,
+  usersState,
+  messagesState,
+} from '../state/index'
+import { useRecoilState } from 'recoil'
+import { Channel as RestChannel } from '../types/index'
+import axios from 'axios'
 
 import Navbar from '../components/Navbar'
 import Channel from '../components/Channel'
@@ -20,43 +28,6 @@ const analogy = [
   "Every truck is a food truck if you're a cannibal.",
   `Why do people say "tuna fish" when they don't say "beef mammal" or "chicken bird"?`,
   "Why aren't iPhone chargers called apple juice?",
-]
-
-const channels = [
-  "a",
-  "b",
-  "c",
-  "d",
-  "e",
-  "f",
-  "g",
-  "h",
-  "i",
-  "j",
-  "k",
-  "l",
-  "m",
-  "n",
-  "o",
-  "p",
-  "q",
-  "r",
-  "s",
-  "t",
-  "u",
-  "v",
-  "w",
-  "x",
-  "y",
-  "z",
-  "1",
-  "2",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
 ]
 
 const Loader: FC = () => {
@@ -81,7 +52,7 @@ const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
 
   const ref = useRef<HTMLDivElement>()
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       ref.current?.classList.add("out")
       setTimeout(() => {
         const cur = s.items.indexOf(j)
@@ -93,7 +64,7 @@ const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
       }, 1100)
     }, 5000)
 
-    return
+    return () => clearTimeout(timeout)
   }, [j])
 
   return (
@@ -104,19 +75,32 @@ const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
 }
 
 const Home: FC = () => {
-  const [l, setL] = useState<boolean>(false)
+  const [l, setL] = useState<boolean>(true)
+  const [channels, setC] = useRecoilState(channelsState)
+  const [messages, setM] = useRecoilState(messagesState)
+  const [users, setU] = useRecoilState(usersState)
 
   const loading = useRef<HTMLDivElement>()
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      loading.current?.classList.add("anim-out")
+    async function dowit() {
+      const channels = await axios.get("/api/channels")
+      const messages = await axios.get("/api/allmessages")
+      const users = await axios.get("/api/users")
+      setC(channels.data.channels)
+      setM(messages.data.messages)
+      setU(users.data.users)
+      isReady()
+    }
+    function isReady() {
       setTimeout(() => {
-        setL(false)
-      }, 1100)
-    }, 8000)
-
-    return () => clearTimeout(timeout)
-  }, [l])
+        loading.current?.classList.add("anim-out")
+        setTimeout(() => {
+          setL(false)
+        }, 1100)
+      }, 2000)
+    }
+    dowit().catch(console.error)
+  }, [])
 
   return (
     <div id="home">
@@ -129,10 +113,10 @@ const Home: FC = () => {
           : ""
       }
       <div className="nav">
-        <Navbar channels={channels} />
+        <Navbar />
       </div>
       <div className="channel">
-        <Channel channels={channels} />
+        <Channel />
       </div>
     </div>
   )
