@@ -5,7 +5,7 @@ module.exports = {
     node: true,
   },
 
-  parser: "babel-eslint",
+  parser: "@typescript-eslint/parser",
 
   parserOptions: {
     sourceType: 'module',

@@ -31,3 +31,10 @@ body {
   color: var(--text);
   height: 100%;
 }
+a:any-link {
+  color: #69a3ff;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}

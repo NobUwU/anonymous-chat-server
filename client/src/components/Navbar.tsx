@@ -8,7 +8,7 @@ import {
 import { useRecoilValue } from 'recoil'
 import { channelsSelector } from '../state/index'
 import { Hash } from '../components/icons/hash'
-import { Channel as RestChannel } from '../types/index'
+
 import "./Navbar.scss"
 
 const Navbar: FC = () => {

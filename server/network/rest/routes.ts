@@ -46,7 +46,7 @@ let messages: { id: string, channel: string, author: string, message: string, da
     id: "529206092341817362",
     channel: "529117321726395943",
     author: "529205188469327361",
-    message: "Test for channel \"test-channel\" new",
+    message: "Markdown test\n\n*italic*\n**bold**\n~~strike~~\n\n\nInjection Test\n<p style=\"color: red;\">Injected Text</p>",
     date: Date.now() + 1000000,
   },
   {
