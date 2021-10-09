@@ -4,10 +4,14 @@ import {
   Message as RestMessage,
 } from '../types/index'
 import {
-  messagesSelector,
   usersSelector,
+  messagesState,
+  currentUserSelector,
 } from '../state/index'
-import { useRecoilValue } from 'recoil'
+import {
+  useRecoilValue,
+  useRecoilState,
+} from 'recoil'
 import { useLocation } from 'react-router-dom'
 import { Hash } from '../components/icons/hash'
 import { Emoji } from '../components/icons/emoji'
@@ -20,6 +24,7 @@ const messageCache = localforage.createInstance({
 })
 
 import "./ActualChannel.scss"
+import axios from 'axios'
 
 interface ActualChannelState {
   channel: RestChannel
@@ -28,8 +33,9 @@ interface ActualChannelState {
 const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
   const ref = React.useRef<HTMLDivElement>()
   const location = useLocation()
-  const messages = useRecoilValue(messagesSelector)
+  const [messages, setMessages] = useRecoilState(messagesState)
   const users = useRecoilValue(usersSelector)
+  const curUser = useRecoilValue(currentUserSelector)
 
   React.useEffect(() => {
     async function getCache(): Promise<string> {
@@ -47,7 +53,16 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
       event.preventDefault()
       event.stopPropagation()
 
-      console.log([event.currentTarget.innerText])
+      axios.post('/api/message', {
+        channel: s.channel.id,
+        user: curUser,
+        message: ref.current.innerText,
+      })
+        .then(({ data }) => {
+          setMessages([...messages, data.message])
+        })
+        .catch(console.error)
+
       ref.current.innerText = ""
       messageCache.setItem(s.channel.id, ref.current.innerText)
     }
@@ -57,7 +72,7 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
     if (event.currentTarget.innerText === "\n") {
       ref.current.innerText = ""
     }
-    console.log("change occured")
+    // console.log("change occured")
     messageCache.setItem(s.channel.id, ref.current.innerText)
   }
 

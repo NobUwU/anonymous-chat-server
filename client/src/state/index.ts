@@ -40,3 +40,14 @@ export const messagesSelector = selector<Message[]>({
     return get(messagesState)
   },
 })
+
+export const currentUserState = atom<string>({
+  key: "currentUser",
+  default: "",
+})
+export const currentUserSelector = selector<string>({
+  key: "theCurrentUser",
+  get: ({ get }) => {
+    return get(currentUserState)
+  },
+})

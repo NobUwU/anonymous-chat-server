@@ -43,18 +43,6 @@ md.block.ruler.disable(['heading', 'hr', 'list', 'footnote', 'lheading', 'table'
 md.inline.ruler.disable(['footnote_ref'])
 md.core.ruler.disable(['footnote_tail'])
 
-const test = `
-Normal Text
-*Italic Text*
-**Bold Text**
-\`Inline Text\`
-\`\`\`ts
-const is = "codeblock"
-console.log(is)
-\`\`\`
-https://animiru.net/
-`
-
 interface MessageState {
   message: RestMessage,
   user: RestUser,
@@ -81,7 +69,7 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
             })}</p>
           </div>
           <div className="message" dangerouslySetInnerHTML={{
-            __html: md.render(test), 
+            __html: md.render(s.message.message), 
           }}></div>
         </div>
       </div>

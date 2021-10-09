@@ -28,48 +28,48 @@ let channels: { id: string, index: number, name: string}[] = [
   },
 ]
 let messages: { id: string, channel: string, author: string, message: string, date: number}[] = [
-  {
-    id: "529206092341839362",
-    channel: "529117321726395943",
-    author: "529205188469327361",
-    message: "Test for channel \"test-channel\"",
-    date: Date.now(),
-  },
-  {
-    id: "529206092341837362",
-    channel: "529117321726395943",
-    author: "529205188469327361",
-    message: "Test for channel \"test-channel\" old",
-    date: Date.now() - 1000000,
-  },
-  {
-    id: "529206092341817362",
-    channel: "529117321726395943",
-    author: "529205188469327361",
-    message: "Markdown test\n\n*italic*\n**bold**\n~~strike~~\n\n\nInjection Test\n<p style=\"color: red;\">Injected Text</p>",
-    date: Date.now() + 1000000,
-  },
-  {
-    id: "529206902178055683",
-    channel: "529117493676082728",
-    author: "529205188469327361",
-    message: "Test for channel \"test-channel-2\"",
-    date: Date.now(),
-  },
-  {
-    id: "529206092341839462",
-    channel: "529117581555140137",
-    author: "529205188469327361",
-    message: "Test for channel \"test-channel\"",
-    date: Date.now(),
-  },
-  {
-    id: "529206092341835362",
-    channel: "529117793568818730",
-    author: "529205188469327361",
-    message: "Test for channel \"test-channel-5\"",
-    date: Date.now(),
-  },
+  // {
+  //   id: "529206092341839362",
+  //   channel: "529117321726395943",
+  //   author: "529205188469327361",
+  //   message: "Test for channel \"test-channel\"",
+  //   date: Date.now(),
+  // },
+  // {
+  //   id: "529206092341837362",
+  //   channel: "529117321726395943",
+  //   author: "529205188469327361",
+  //   message: "Test for channel \"test-channel\" old",
+  //   date: Date.now() - 1000000,
+  // },
+  // {
+  //   id: "529206092341817362",
+  //   channel: "529117321726395943",
+  //   author: "529205188469327361",
+  //   message: "Markdown test\n\n*italic*\n**bold**\n~~strike~~\n\n\nInjection Test\n<p style=\"color: red;\">Injected Text</p>",
+  //   date: Date.now() + 1000000,
+  // },
+  // {
+  //   id: "529206902178055683",
+  //   channel: "529117493676082728",
+  //   author: "529205188469327361",
+  //   message: "Test for channel \"test-channel-2\"",
+  //   date: Date.now(),
+  // },
+  // {
+  //   id: "529206092341839462",
+  //   channel: "529117581555140137",
+  //   author: "529205188469327361",
+  //   message: "Test for channel \"test-channel\"",
+  //   date: Date.now(),
+  // },
+  // {
+  //   id: "529206092341835362",
+  //   channel: "529117793568818730",
+  //   author: "529205188469327361",
+  //   message: "Test for channel \"test-channel-5\"",
+  //   date: Date.now(),
+  // },
 ]
 let users: { id: string, avatar: string, username: string, color?: string }[] = [
   {

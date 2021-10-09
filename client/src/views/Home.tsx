@@ -8,6 +8,7 @@ import {
   channelsState,
   usersState,
   messagesState,
+  currentUserState,
 } from '../state/index'
 import { useRecoilState } from 'recoil'
 import { Channel as RestChannel } from '../types/index'
@@ -79,10 +80,27 @@ const Home: FC = () => {
   const [channels, setC] = useRecoilState(channelsState)
   const [messages, setM] = useRecoilState(messagesState)
   const [users, setU] = useRecoilState(usersState)
+  const [curUser, setCU] = useRecoilState(currentUserState)
+  const currentUser = localStorage.getItem("uid")
 
   const loading = useRef<HTMLDivElement>()
   useEffect(() => {
     async function dowit() {
+      if (!currentUser) {
+        const newUser = await axios.post("/api/user", { username: "New User" })
+        localStorage.setItem('uid', newUser.data.user.id)
+        setCU(newUser.data.user.id)
+      } else {
+        try {
+          const curU = await axios.get(`/api/user?id=${currentUser}`)
+          setCU(curU.data.user.id)
+        } catch (error) {
+          console.error(error)
+          const newUser = await axios.post("/api/user", { username: "New User" })
+          localStorage.setItem('uid', newUser.data.user.id)
+          setCU(newUser.data.user.id)
+        }
+      }
       const channels = await axios.get("/api/channels")
       const messages = await axios.get("/api/allmessages")
       const users = await axios.get("/api/users")

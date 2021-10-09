@@ -59,9 +59,11 @@
       align-items: center;
       div:empty::before {
         color: grey;
+        cursor: text;
       }
       div[data-placeholder]:not([data-placeholder=""]):empty::before {
         content: attr(data-placeholder);
+        cursor: text;
       }
       div:empty::before {
         content: 'fallback placeholder';
