@@ -1,3 +1,5 @@
+@import "~mixins/breakpoints.scss";
+
 #home {
   width: 100%;
   height: 100%;
@@ -8,7 +10,45 @@
   .nav {
     max-width: 15rem;
     min-width: 15rem;
-    // position: fixed;
+    .opener {
+      display: none;
+    }
+    @include sm {
+      position: fixed;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      z-index: 99999;
+      transform: translateX(-13rem);
+      transition: transform 0.7s ease;
+      .opener {
+        display: inline-block;
+        min-width: 2rem;
+        min-height: 2rem;
+        max-width: 2rem;
+        max-height: 2rem;
+        background-color: #00000099;
+        margin-top: 0.55rem;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        svg {
+          width: 2rem;
+          height: 2rem;
+          transition: transform 0.7s ease;
+          transform: rotate(0deg);
+        }
+      }
+      &.open {
+        transition: transform 0.7s ease;
+        transform: translateX(0rem);
+        .opener {
+          svg {
+            transition: transform 0.7s ease;
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
   }
   .channel {
     width: 100%;
@@ -20,7 +60,7 @@
   justify-content: center;
   flex-direction: column;
   position: fixed;
-  z-index: 99999;
+  z-index: 999999;
   width: 100vw;
   height: 100vh;
   background-color: var(--background);
@@ -95,7 +135,7 @@
   max-height: 1rem;
   text-align: center;
   font-weight: 100;
-  font-family: 'ChivoLight';
+  font-family: 'ChivoLight', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   animation: animin 1s ease;
   @keyframes animin {
     from {

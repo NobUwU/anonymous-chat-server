@@ -24,53 +24,55 @@ let channels: { id: string, index: number, name: string}[] = [
   {
     "index": 4,
     "name": "test-channel-5",
-    "id": "529117793568818730",
+    "id": "529117793568818530",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529117793568418730",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529117793569818730",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529117193568818730",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529137793568818730",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529817793568818730",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529917793568818730",
+  },
+  {
+    "index": 4,
+    "name": "test-channel-5",
+    "id": "529107793568818730",
   },
 ]
-let messages: { id: string, channel: string, author: string, message: string, date: number}[] = [
-  // {
-  //   id: "529206092341839362",
-  //   channel: "529117321726395943",
-  //   author: "529205188469327361",
-  //   message: "Test for channel \"test-channel\"",
-  //   date: Date.now(),
-  // },
-  // {
-  //   id: "529206092341837362",
-  //   channel: "529117321726395943",
-  //   author: "529205188469327361",
-  //   message: "Test for channel \"test-channel\" old",
-  //   date: Date.now() - 1000000,
-  // },
-  // {
-  //   id: "529206092341817362",
-  //   channel: "529117321726395943",
-  //   author: "529205188469327361",
-  //   message: "Markdown test\n\n*italic*\n**bold**\n~~strike~~\n\n\nInjection Test\n<p style=\"color: red;\">Injected Text</p>",
-  //   date: Date.now() + 1000000,
-  // },
-  // {
-  //   id: "529206902178055683",
-  //   channel: "529117493676082728",
-  //   author: "529205188469327361",
-  //   message: "Test for channel \"test-channel-2\"",
-  //   date: Date.now(),
-  // },
-  // {
-  //   id: "529206092341839462",
-  //   channel: "529117581555140137",
-  //   author: "529205188469327361",
-  //   message: "Test for channel \"test-channel\"",
-  //   date: Date.now(),
-  // },
-  // {
-  //   id: "529206092341835362",
-  //   channel: "529117793568818730",
-  //   author: "529205188469327361",
-  //   message: "Test for channel \"test-channel-5\"",
-  //   date: Date.now(),
-  // },
-]
+let messages: { id: string, channel: string, author: string, message: string, date: number}[] = new Array(100000)
+  .fill({})
+  .map((e,i) => {
+    return {
+      id: i.toString(),
+      channel: "529117321726395943",
+      author: "529205188469327361",
+      message: "some super long message because i want to push this dumb shit to its limits. I feel like everything is going to die and it is going to be amazing.",
+      date: Date.now() + i,
+    }
+  })
 let users: { id: string, avatar: string, username: string, color?: string }[] = [
   {
     id: "529205188469327361",
@@ -265,10 +267,29 @@ router.delete("/user", (req, res) => {
 /**
  * MESSAGE ENDPOINTS
  */
+export interface RestMessage {
+  id: string,
+  channel: string,
+  author: string,
+  message: string,
+  date: number
+}
+function sortByDate(a: RestMessage, b: RestMessage): number {
+  if (a.date > b.date) {
+    return -1
+  }
+  if (a.date < b.date) {
+    return 1
+  }
+
+  return 0
+}
 router.get("/allmessages", (req, res) => {
+  const messagez = messages.sort(sortByDate).slice(0, 50)
+
   res.status(200).json({
     msg: "Item(s) successfully fetched!",
-    messages,
+    messages: messagez,
   })
 })
 router.get("/messages", (req, res) => {

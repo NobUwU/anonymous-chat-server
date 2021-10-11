@@ -11,7 +11,7 @@ import {
   currentUserState,
 } from '../state/index'
 import { useRecoilState } from 'recoil'
-import { Channel as RestChannel } from '../types/index'
+import { Chevron } from '../components/icons/chevron'
 import axios from 'axios'
 
 import Navbar from '../components/Navbar'
@@ -77,10 +77,10 @@ const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
 
 const Home: FC = () => {
   const [l, setL] = useState<boolean>(true)
-  const [channels, setC] = useRecoilState(channelsState)
-  const [messages, setM] = useRecoilState(messagesState)
-  const [users, setU] = useRecoilState(usersState)
-  const [curUser, setCU] = useRecoilState(currentUserState)
+  const [, setC] = useRecoilState(channelsState)
+  const [, setM] = useRecoilState(messagesState)
+  const [, setU] = useRecoilState(usersState)
+  const [, setCU] = useRecoilState(currentUserState)
   const currentUser = localStorage.getItem("uid")
 
   const loading = useRef<HTMLDivElement>()
@@ -120,6 +120,14 @@ const Home: FC = () => {
     dowit().catch(console.error)
   }, [])
 
+  const [open, setOpen] = useState<boolean>(false)
+  const opener = useRef<HTMLDivElement>()
+  const nav = useRef<HTMLDivElement>()
+  function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    // console.log(e)
+    setOpen(!open)
+  }
+
   return (
     <div id="home">
       {
@@ -130,8 +138,11 @@ const Home: FC = () => {
           </div>
           : ""
       }
-      <div className="nav">
+      <div className={`nav ${open ? "open" : ""}`} ref={nav}>
         <Navbar />
+        <div className="opener" ref={opener} onClick={onClick}>
+          <Chevron />
+        </div>
       </div>
       <div className="channel">
         <Channel />

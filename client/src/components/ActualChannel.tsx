@@ -31,12 +31,17 @@ interface ActualChannelState {
 } 
 
 const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
-  const ref = React.useRef<HTMLDivElement>()
+  const [messagez, setMessages] = useRecoilState(messagesState)
   const location = useLocation()
-  const [messages, setMessages] = useRecoilState(messagesState)
   const users = useRecoilValue(usersSelector)
   const curUser = useRecoilValue(currentUserSelector)
+  const messages = messagez.filter(i => i.channel === s.channel.id)
 
+  React.useEffect(() => {
+    console.log("channel (message container) useEffect")
+  }, [])
+
+  const ref = React.useRef<HTMLDivElement>()
   React.useEffect(() => {
     async function getCache(): Promise<string> {
       return await messageCache.getItem(s.channel.id)
@@ -59,7 +64,7 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
         message: ref.current.innerText,
       })
         .then(({ data }) => {
-          setMessages([...messages, data.message])
+          setMessages([data.message, ...messages])
         })
         .catch(console.error)
 
@@ -96,14 +101,14 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
       <div className="textarea">
         {
           messages
-            .filter(i => i.channel === s.channel.id)
-            .sort(sortByDate)
+            // .filter(i => i.channel === s.channel.id)
+            // .sort(sortByDate)
             .map((i, ind) => {
               let user = users.find(it => it.id === i.author)
               if (!user) user = {
                 id: `${ind}${Date.now()}`,
                 avatar: "/static/logo.png",
-                username: `Unknown_User-${Math.floor(Math.random() * 9999)}`, 
+                username: `Unknown_User`, 
               }
 
               return <Message key={i.id} message={i} user={user} />

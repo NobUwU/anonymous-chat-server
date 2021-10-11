@@ -1,4 +1,6 @@
+@import "~mixins/breakpoints.scss";
 #navbar {
+  // position: fixed;
   width: 100%;
   height: 100vh;
   padding: 0.5rem;
@@ -12,9 +14,15 @@
   &:hover {
     transition: overflow-y 1s ease;
     overflow-y: unset;
+    @include sm {
+      overflow-y: scroll;
+    }
+  }
+  @include sm {
+    overflow-y: scroll;
   }
   .channel {
-    font-family: 'Chivo';
+    font-family: 'Chivo', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     display: flex;
     flex-direction: row;
     align-items: center;

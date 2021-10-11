@@ -50,6 +50,10 @@ interface MessageState {
 const Message: React.FC<MessageState> = (s: MessageState) => {
   const date = new Date(s.message.date)
 
+  React.useEffect(() => {
+    console.log("Message Component useEffect")
+  }, [])
+
   return (
     <div id="message">
       <div className="info">
