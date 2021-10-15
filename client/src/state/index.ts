@@ -2,53 +2,106 @@ import {
   atom,
   selector,
   atomFamily,
+  selectorFamily,
+  DefaultValue,
 } from 'recoil'
 import {
-  Channel,
   Message,
   User,
+  Channel,
+  ChannelMessage,
 } from '../types/index'
 
-export const channelsState = atom<Channel[]>({
-  key: "channels",
-  default: [],
-})
-export const channelsSelector = selector<Channel[]>({
-  key: "allChannels",
-  get: ({ get }) => {
-    return get(channelsState)
-  },
-})
-
-export const usersState = atom<User[]>({
-  key: "users",
-  default: [],
-})
-export const usersSelector = selector<User[]>({
-  key: "allUsers",
-  get: ({ get }) => {
-    return get(usersState)
-  },
-})
-
-export const messagesState = atom<Message[]>({
-  key: "messages",
-  default: [],
-})
-export const messagesSelector = selector<Message[]>({
-  key: "allMessages",
-  get: ({ get }) => {
-    return get(messagesState)
-  },
-})
+const guardRecoilDefault = (
+  candidate: unknown,
+): candidate is DefaultValue => {
+  if (candidate instanceof DefaultValue) return true
+  
+  return false
+}
 
 export const currentUserState = atom<string>({
   key: "currentUser",
   default: "",
 })
-export const currentUserSelector = selector<string>({
-  key: "theCurrentUser",
-  get: ({ get }) => {
-    return get(currentUserState)
+
+export const userFamily = atomFamily<User, string>({
+  key: "userState",
+  default: undefined,
+})
+export const userIdState = atom<string[]>({
+  key: "userIds",
+  default: [],
+})
+export const userState = selectorFamily<User, string>({
+  key: "userAccess",
+  get: (id) => ({ get }) => {
+    const atom = get(userFamily(id))
+
+    return atom
+  },
+  set: (id) => ({ set, reset }, user) => {
+    if (guardRecoilDefault(user)) {
+      reset(userFamily(id))
+      set(userIdState, (oldIds) => oldIds.filter((idList) => idList !== id))
+
+      return
+    }
+    set(userFamily(id), user)
+    set(userIdState, (prev) => [...prev, user.id])
+  },
+})
+
+export const channelFamily = atomFamily<Channel, string>({
+  key: "channelState",
+  default: undefined,
+})
+export const channelIdState = atom<string[]>({
+  key: "channelIds",
+  default: [],
+})
+export const channelState = selectorFamily<Channel, string>({
+  key: "channelsAccess",
+  get: (id) => ({ get }) => {
+    const atom = get(channelFamily(id))
+    
+    return atom
+  },
+  set: (id) => ({ set, reset }, channel) => {
+    if (guardRecoilDefault(channel)) {
+      reset(channelFamily(id))
+      set(channelIdState, (oldIds) => oldIds.filter((idList) => idList !== id))
+      
+      return
+    }
+    set(channelFamily(id), channel)
+    set(channelIdState, (prev) => [...prev, channel.id])
+  },
+})
+
+export const messageFamily = atomFamily<ChannelMessage, string>({
+  key: "messageState",
+  default: undefined,
+})
+export const messageIdState = atom<string[]>({
+  key: "messageIds",
+  default: [],
+})
+export const messageState = selectorFamily<ChannelMessage, string>({
+  key: "messageAccess",
+  get: (id) => ({ get }) => {
+    const atom = get(messageFamily(id))
+    
+    return atom
+  },
+  set: (id) => ({ set, reset }, message) => {
+    if (guardRecoilDefault(message)) {
+      reset(messageFamily(id))
+      set(messageIdState, (oldIds) => oldIds.filter((idList) => idList !== id))
+      
+      return
+    }
+    set(messageFamily(id), message)
+    set(messageIdState, (prev) => [message.id, ...prev])
   },
 })

@@ -309,7 +309,8 @@ router.get("/messages", (req, res) => {
 
   res.status(200).json({
     msg: "Item(s) successfully fetched!",
-    messages: messages.filter(i => i.channel === channelId),
+    messages: messages.filter(i => i.channel === channelId).sort(sortByDate)
+      .slice(0, 50),
   })
 })
 router.get("/message", (req, res) => {
@@ -341,6 +342,8 @@ router.post("/message", (req, res) => {
       msg: "Invalid Request! Missing parameters!",
     })
   }
+
+  // return res.sendStatus(500)
 
   const channel = channels.filter(i => i.id == channelId)
   if (!channel) {

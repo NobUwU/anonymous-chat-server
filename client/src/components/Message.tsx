@@ -1,11 +1,16 @@
 import React from 'react'
 import {
-  User as RestUser,
   Message as RestMessage,
 } from '../types/index'
+import {
+  userState,
+} from '../state/index'
+import { useRecoilState } from 'recoil'
 import { Remarkable } from 'remarkable'
 import { linkify } from 'remarkable/linkify'
 import hljs from 'highlight.js'
+import axios from 'axios'
+
 import "./Message.scss"
 
 import "highlight.js/scss/github-dark.scss"
@@ -15,7 +20,7 @@ const md = new Remarkable({
   xhtmlOut: true,
   breaks: true,
   langPrefix: "codeylangy-",
-  linkify: true,
+  // linkify: true,
   linkTarget: '_blank',
   typographer: false,
   highlight(str, lang) {
@@ -45,24 +50,41 @@ md.core.ruler.disable(['footnote_tail'])
 
 interface MessageState {
   message: RestMessage,
-  user: RestUser,
 }
 const Message: React.FC<MessageState> = (s: MessageState) => {
   const date = new Date(s.message.date)
+  const [user, setUser] = useRecoilState(userState(s.message.author))
+
+  if (!user) setUser({
+    id: s.message.author,
+    username: "Unknown User",
+    avatar: "/static/logo.png",
+    temp: true,
+  })
 
   React.useEffect(() => {
-    console.log("Message Component useEffect")
+    async function attemptUser(): Promise<void> {
+      try {
+        const attemptUnknown = await axios.get(`/api/user?id=${s.message.author}`)
+        setUser(attemptUnknown.data.user)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    if (user.temp) {
+      attemptUser()
+    }
   }, [])
 
   return (
     <div id="message">
       <div className="info">
         <div className="avatar">
-          <img src={s.user.avatar} alt={s.user.username} />
+          <img src={user.avatar} alt={user.username} />
         </div>
         <div className="content">
           <div className="user-info">
-            <h3 style={s.user.color ? { color: s.user.color } : {}}>{s.user.username}</h3>
+            <h3 style={user.color ? { color: user.color } : {}}>{user.username}</h3>
             <p className="date">{date.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
@@ -72,7 +94,7 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
               minute:'2-digit', 
             })}</p>
           </div>
-          <div className="message" dangerouslySetInnerHTML={{
+          <div className="message" style={ s.message.failed ? { color: "#ff6969" } : {} } dangerouslySetInnerHTML={{
             __html: md.render(s.message.message), 
           }}></div>
         </div>

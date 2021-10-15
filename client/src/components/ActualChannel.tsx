@@ -4,13 +4,13 @@ import {
   Message as RestMessage,
 } from '../types/index'
 import {
-  usersSelector,
-  messagesState,
-  currentUserSelector,
+  channelState,
+  currentUserState,
+  messageState,
 } from '../state/index'
 import {
-  useRecoilValue,
   useRecoilState,
+  useRecoilValue,
 } from 'recoil'
 import { useLocation } from 'react-router-dom'
 import { Hash } from '../components/icons/hash'
@@ -27,15 +27,17 @@ import "./ActualChannel.scss"
 import axios from 'axios'
 
 interface ActualChannelState {
-  channel: RestChannel
+  id: string
 } 
 
 const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
-  const [messagez, setMessages] = useRecoilState(messagesState)
+  const channel = useRecoilValue(channelState(s.id))
+  const [messages, setMessages] = useRecoilState(messageState(s.id))
+  const curUser = useRecoilValue(currentUserState)
   const location = useLocation()
-  const users = useRecoilValue(usersSelector)
-  const curUser = useRecoilValue(currentUserSelector)
-  const messages = messagez.filter(i => i.channel === s.channel.id)
+  // const [messagez, setMessages] = useRecoilState(messagesState)
+  // const users = useRecoilValue(usersSelector)
+  // const messages = messagez.filter(i => i.channel === s.channel.id)
 
   React.useEffect(() => {
     console.log("channel (message container) useEffect")
@@ -44,7 +46,7 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
   const ref = React.useRef<HTMLDivElement>()
   React.useEffect(() => {
     async function getCache(): Promise<string> {
-      return await messageCache.getItem(s.channel.id)
+      return await messageCache.getItem(s.id)
     }
     getCache()
       .then((r) => {
@@ -58,18 +60,46 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
       event.preventDefault()
       event.stopPropagation()
 
+      if (!ref.current.innerText.length) return
+
       axios.post('/api/message', {
-        channel: s.channel.id,
+        channel: s.id,
         user: curUser,
         message: ref.current.innerText,
       })
         .then(({ data }) => {
-          setMessages([data.message, ...messages])
-        })
-        .catch(console.error)
+          setMessages({
+            id: s.id,
+            messages: [
+              data.message,
+              ...messages?.messages,
+            ],
+          })
 
-      ref.current.innerText = ""
-      messageCache.setItem(s.channel.id, ref.current.innerText)
+          ref.current.innerText = ""
+        })
+        .catch((err) => {
+          console.error(err)
+
+          setMessages({
+            id: s.id,
+            messages: [
+              {
+                id: `${Date.now()}`,
+                author: curUser,
+                channel: s.id,
+                message: ref.current.innerText,
+                date: Date.now(),
+                failed: true,
+              },
+              ...messages?.messages,
+            ],
+          })
+
+          ref.current.innerText = ""
+        })
+
+      messageCache.setItem(s.id, "")
     }
   }
 
@@ -78,7 +108,7 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
       ref.current.innerText = ""
     }
     // console.log("change occured")
-    messageCache.setItem(s.channel.id, ref.current.innerText)
+    messageCache.setItem(s.id, ref.current.innerText)
   }
 
   function sortByDate(a: RestMessage, b: RestMessage): number {
@@ -96,28 +126,19 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
     <div id="actual-channel">
       <div className="header">
         <Hash />
-        <h3>{s.channel.name}</h3>
+        <h3>{channel.name}</h3>
       </div>
       <div className="textarea">
         {
-          messages
-            // .filter(i => i.channel === s.channel.id)
-            // .sort(sortByDate)
+          messages?.messages
             .map((i, ind) => {
-              let user = users.find(it => it.id === i.author)
-              if (!user) user = {
-                id: `${ind}${Date.now()}`,
-                avatar: "/static/logo.png",
-                username: `Unknown_User`, 
-              }
-
-              return <Message key={i.id} message={i} user={user} />
+              return <Message key={i.id} message={i} />
             })
         }
       </div>
       <div className="textbar">
         <div className="textbar-content">
-          <div id="textarea" ref={ref} contentEditable data-placeholder={`Message #${s.channel.name}`} onKeyDown={handleKeyDown} onInput={handleChange}></div>
+          <div id="textarea" ref={ref} contentEditable data-placeholder={`Message #${channel.name}`} onKeyDown={handleKeyDown} onInput={handleChange}></div>
           <div className="emoji">
             <Emoji />
           </div>

@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  channelsSelector,
+  channelState,
 } from '../state/index'
 import { useLocation } from 'react-router-dom'
 import { Hash } from '../components/icons/hash'
@@ -20,13 +20,13 @@ const NoChannel: React.FC = () => (
 
 const Channel: React.FC = () => {
   const location = useLocation()
-  const channels = useRecoilValue(channelsSelector)
+  const value = useRecoilValue(channelState(location.hash?.replace(/#/g, "")))
 
   return (
     <div id="channel">
       {
-        channels.map(item => item.id).includes(location.hash?.replace(/#/g, ""))
-          ? <ActualChannel channel={channels.find(i => i.id === location.hash?.replace(/#/g, ""))} />
+        value
+          ? <ActualChannel id={value.id} />
           : <NoChannel />
       }
     </div>

@@ -8,11 +8,17 @@ export interface Message {
   channel: string,
   author: string,
   message: string,
-  date: number
+  date: number,
+  failed?: boolean
 }
 export interface User {
   id: string,
   avatar: string,
   username: string,
-  color?: string
+  color?: string,
+  temp?: boolean
+}
+export interface ChannelMessage {
+  id: string
+  messages: Message[]
 }

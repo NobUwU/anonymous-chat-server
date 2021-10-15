@@ -5,15 +5,25 @@ import React, {
   useEffect,
 } from 'react'
 import {
-  channelsState,
-  usersState,
-  messagesState,
+  userState,
+  channelState,
+  messageState,
   currentUserState,
 } from '../state/index'
-import { useRecoilState } from 'recoil'
+import {
+  User as RestUser,
+  Message as RestMessage,
+  Channel as RestChannel,
+  ChannelMessage,
+} from 'src/types'
+import {
+  useRecoilState,
+  useRecoilCallback,
+} from 'recoil'
 import { Chevron } from '../components/icons/chevron'
 import axios from 'axios'
 
+import Loader from '../components/Loader'
 import Navbar from '../components/Navbar'
 import Channel from '../components/Channel'
 
@@ -31,22 +41,6 @@ const analogy = [
   "Why aren't iPhone chargers called apple juice?",
 ]
 
-const Loader: FC = () => {
-  return (
-    <div id="loader">
-      <div className="l-bar l-bar1"></div>
-      <div className="l-bar l-bar2"></div>
-      <div className="l-bar l-bar3"></div>
-      <div className="l-bar l-bar4"></div>
-      <div className="l-bar l-bar5"></div>
-      <div className="l-bar l-bar6"></div>
-      <div className="l-bar l-bar7"></div>
-      <div className="l-bar l-bar8"></div>
-      <div className="l-bar l-bar9"></div>
-      <div className="l-bar l-bar10"></div>
-    </div>
-  )
-}
 
 const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
   const [j, cj] = useState<string>(s.items[Math.floor(Math.random() * s.items.length)])
@@ -77,37 +71,65 @@ const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
 
 const Home: FC = () => {
   const [l, setL] = useState<boolean>(true)
-  const [, setC] = useRecoilState(channelsState)
-  const [, setM] = useRecoilState(messagesState)
-  const [, setU] = useRecoilState(usersState)
   const [, setCU] = useRecoilState(currentUserState)
+  const [open, setOpen] = useState<boolean>(false)
   const currentUser = localStorage.getItem("uid")
 
+  const opener = useRef<HTMLDivElement>()
+  const nav = useRef<HTMLDivElement>()
   const loading = useRef<HTMLDivElement>()
+ 
+  const addUser = useRecoilCallback(({ set }) => (user: RestUser) => {
+    set(userState(user.id), user)
+  })
+  const addChannel = useRecoilCallback(({ set }) => (channel: RestChannel) => {
+    set(channelState(channel.id), channel)
+  })
+  const addMessages = useRecoilCallback(({ set }) => (messages: ChannelMessage) => {
+    set(messageState(messages.id), messages)
+  })
+
   useEffect(() => {
     async function dowit() {
+      await attemptLocalUser()
+      const userRequest = await axios.get("/api/users")
+      const users: RestUser[] = userRequest.data.users
+      for (const user of users) {
+        addUser(user)
+      }
+      const channelsRequest = await axios.get("/api/channels")
+      const channels: RestChannel[] = channelsRequest.data.channels
+      for (const channel of channels) {
+        addChannel(channel)
+        const messageRequest = await axios.get(`/api/messages?channel=${channel.id}`)
+        const messages: RestMessage[] = messageRequest.data.messages
+        addMessages({
+          id: channel.id,
+          messages, 
+        })
+      }
+      isReady()
+    }
+    async function attemptLocalUser(): Promise<void> {
       if (!currentUser) {
         const newUser = await axios.post("/api/user", { username: "New User" })
-        localStorage.setItem('uid', newUser.data.user.id)
-        setCU(newUser.data.user.id)
+        setLocalUser(newUser.data.user.id)
       } else {
         try {
           const curU = await axios.get(`/api/user?id=${currentUser}`)
-          setCU(curU.data.user.id)
+          setLocalUser(curU.data.user.id)
         } catch (error) {
           console.error(error)
           const newUser = await axios.post("/api/user", { username: "New User" })
-          localStorage.setItem('uid', newUser.data.user.id)
-          setCU(newUser.data.user.id)
+          setLocalUser(newUser.data.user.id)
         }
       }
-      const channels = await axios.get("/api/channels")
-      const messages = await axios.get("/api/allmessages")
-      const users = await axios.get("/api/users")
-      setC(channels.data.channels)
-      setM(messages.data.messages)
-      setU(users.data.users)
-      isReady()
+
+      return
+    }
+    function setLocalUser(id: string): void {
+      localStorage.setItem('uid', id)
+      setCU(id)
     }
     function isReady() {
       setTimeout(() => {
@@ -117,14 +139,11 @@ const Home: FC = () => {
         }, 1100)
       }, 2000)
     }
+
     dowit().catch(console.error)
   }, [])
 
-  const [open, setOpen] = useState<boolean>(false)
-  const opener = useRef<HTMLDivElement>()
-  const nav = useRef<HTMLDivElement>()
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    // console.log(e)
     setOpen(!open)
   }
 
