@@ -1,3 +1,8 @@
+import {
+  Message,
+  Channel,
+  User,
+} from '../../../@types'
 import { Router } from 'express'
 import { Pr_Ipv4 } from '@animiru/singularity'
 import C from '../../Constants'
@@ -5,7 +10,7 @@ const router = Router()
 
 const singularity = new Pr_Ipv4(C.Epoch)
 
-let channels: { id: string, index: number, name: string}[] = [
+let channels: Channel[] = [
   {
     "index": 1,
     "name": "test-channel",
@@ -62,7 +67,7 @@ let channels: { id: string, index: number, name: string}[] = [
     "id": "529107793568818730",
   },
 ]
-let messages: { id: string, channel: string, author: string, message: string, date: number}[] = new Array(100000)
+let messages: Message[] = new Array(100000)
   .fill({})
   .map((e,i) => {
     return {
@@ -73,7 +78,7 @@ let messages: { id: string, channel: string, author: string, message: string, da
       date: Date.now() + i,
     }
   })
-let users: { id: string, avatar: string, username: string, color?: string }[] = [
+let users: User[] = [
   {
     id: "529205188469327361",
     avatar: "https://s167.daydaynews.cc/?url=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F11520931368%2F1000",

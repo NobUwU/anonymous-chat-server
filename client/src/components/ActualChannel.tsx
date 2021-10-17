@@ -1,9 +1,5 @@
 import React from 'react'
 import {
-  Channel as RestChannel,
-  Message as RestMessage,
-} from '../types/index'
-import {
   channelState,
   currentUserState,
   messageState,
@@ -109,17 +105,6 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
     }
     // console.log("change occured")
     messageCache.setItem(s.id, ref.current.innerText)
-  }
-
-  function sortByDate(a: RestMessage, b: RestMessage): number {
-    if (a.date > b.date) {
-      return -1
-    }
-    if (a.date < b.date) {
-      return 1
-    }
-
-    return 0
   }
 
   return (

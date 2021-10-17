@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Message as RestMessage,
-} from '../types/index'
+} from '../../../@types'
 import {
   userState,
 } from '../state/index'

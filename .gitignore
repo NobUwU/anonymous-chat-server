@@ -29,3 +29,6 @@ yarn-error.log*
 
 # Remove Bundle
 *.bundle
+
+# DB
+db

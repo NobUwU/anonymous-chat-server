@@ -14,8 +14,8 @@ import {
   User as RestUser,
   Message as RestMessage,
   Channel as RestChannel,
-  ChannelMessage,
-} from 'src/types'
+  MessageFamily,
+} from '../../../@types'
 import {
   useRecoilState,
   useRecoilCallback,
@@ -85,7 +85,7 @@ const Home: FC = () => {
   const addChannel = useRecoilCallback(({ set }) => (channel: RestChannel) => {
     set(channelState(channel.id), channel)
   })
-  const addMessages = useRecoilCallback(({ set }) => (messages: ChannelMessage) => {
+  const addMessages = useRecoilCallback(({ set }) => (messages: MessageFamily) => {
     set(messageState(messages.id), messages)
   })
 

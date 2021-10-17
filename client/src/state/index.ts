@@ -9,8 +9,8 @@ import {
   Message,
   User,
   Channel,
-  ChannelMessage,
-} from '../types/index'
+  MessageFamily,
+} from '../../../@types'
 
 const guardRecoilDefault = (
   candidate: unknown,
@@ -79,7 +79,7 @@ export const channelState = selectorFamily<Channel, string>({
   },
 })
 
-export const messageFamily = atomFamily<ChannelMessage, string>({
+export const messageFamily = atomFamily<MessageFamily, string>({
   key: "messageState",
   default: undefined,
 })
@@ -87,7 +87,7 @@ export const messageIdState = atom<string[]>({
   key: "messageIds",
   default: [],
 })
-export const messageState = selectorFamily<ChannelMessage, string>({
+export const messageState = selectorFamily<MessageFamily, string>({
   key: "messageAccess",
   get: (id) => ({ get }) => {
     const atom = get(messageFamily(id))
