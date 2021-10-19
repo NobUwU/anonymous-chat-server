@@ -3,5 +3,7 @@ export interface User {
   avatar: string,
   username: string,
   color?: string,
+  bot?: boolean,
+  server?: boolean,
   temp?: boolean
 }

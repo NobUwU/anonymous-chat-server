@@ -21,6 +21,25 @@ export const createUser = async (username: string, avatar = "/static/logo.png", 
 
   return getUserById(id)
 }
+export const createServer = async (id: string, username: string, avatar = "/static/logo.png", color = "#ffffff"): Promise<User | undefined> => {
+  await db.run(/*sql*/`
+    INSERT INTO users (
+      "id",
+      "username",
+      "avatar",
+      "color",
+      "server"
+    ) VALUES (
+      $1,
+      $2,
+      $3,
+      $4,
+      $5
+    );
+  `, [id, username, avatar, color, true])
+
+  return getUserById(id)
+}
 export const getUsers = async (): Promise<User[]> => {
   return await db.all<User[]>(/*sql*/`
     SELECT * FROM users;

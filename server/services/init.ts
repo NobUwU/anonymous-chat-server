@@ -3,6 +3,11 @@ import {
   getChannels,
   createChannel,
 } from './channel'
+import { createMessage } from './message'
+import {
+  createServer,
+  getUserById,
+} from './user'
 
 export const initStore = async () => {
   await db.exec(/*sql*/`
@@ -19,6 +24,8 @@ export const initStore = async () => {
       "username" TEXT NOT NULL,
       "avatar" TEXT,
       "color" TEXT,
+      "bot" BOOLEAN DEFAULT false,
+      "server" BOOLEAN DEFAULT false,
 
       PRIMARY KEY("id")
     );
@@ -37,10 +44,17 @@ export const initStore = async () => {
   `)
 
   // Check if channels. If none add two
-  const channels = await getChannels()
+  let channels = await getChannels()
   if (!channels.length) {
     await createChannel("general-1")
     await createChannel("general-2")
+    channels = await getChannels()
   }
-
+  const serverClient = await getUserById("123")
+  if (!serverClient) {
+    await createServer("123", "Overseerr", "/static/logo-colored.png", "#bc69ff")
+    for (const channel of channels) {
+      await createMessage(channel.id, "123", `New Channel \`#${channel.name}\` Created!`)
+    }
+  }
 }

@@ -89,6 +89,13 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
         <div className="content">
           <div className="user-info">
             <h3 style={user.color ? { color: user.color } : {}}>{user.username}</h3>
+            {
+              user.server
+                ? <div id="mini-tag" className="server">
+                  <p>SERVER</p>
+                </div>
+                : ""
+            }
             <p className="date">{date.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
