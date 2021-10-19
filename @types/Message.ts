@@ -2,8 +2,8 @@ export interface Message {
   id: string,
   channel: string,
   author: string,
-  message: string,
-  date: number,
+  content: string,
+  date: string,
   failed?: boolean
 }
 

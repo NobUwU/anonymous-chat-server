@@ -52,7 +52,7 @@ interface MessageState {
   message: RestMessage,
 }
 const Message: React.FC<MessageState> = (s: MessageState) => {
-  const date = new Date(s.message.date)
+  const date = new Date(parseInt(s.message.date))
   const [user, setUser] = useRecoilState(userState(s.message.author))
 
   if (!user) setUser({
@@ -61,6 +61,10 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
     avatar: "/static/logo.png",
     temp: true,
   })
+
+  React.useEffect(() => {
+    console.log("message state loaded")
+  }, [])
 
   React.useEffect(() => {
     async function attemptUser(): Promise<void> {
@@ -95,7 +99,7 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
             })}</p>
           </div>
           <div className="message" style={ s.message.failed ? { color: "#ff6969" } : {} } dangerouslySetInnerHTML={{
-            __html: md.render(s.message.message), 
+            __html: md.render(s.message.content), 
           }}></div>
         </div>
       </div>

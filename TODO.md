@@ -1,0 +1,1 @@
+- Authenticated requests. (Everything is open ended right now and request can be faked as another user etc.)

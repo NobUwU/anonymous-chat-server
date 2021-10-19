@@ -2,7 +2,7 @@ import { Channel } from '../../@types'
 import { db } from '../store'
 import { construct } from './id'
 
-export const createChannel = async (name: string, index = -1): Promise<Channel> => {
+export const createChannel = async (name: string, index = -1): Promise<Channel | undefined> => {
   const id = construct()
   
   await db.run(/*sql*/`
@@ -15,7 +15,7 @@ export const createChannel = async (name: string, index = -1): Promise<Channel> 
       $2,
       $3
     );
-  `, [id, name, index])
+  `, [id, index, name])
 
   return getChannelById(id)
 }
@@ -24,7 +24,7 @@ export const getChannels = async(): Promise<Channel[]> => {
     SELECT * FROM channels;
   `)
 }
-export const getChannelById = async(id: string): Promise<Channel> => {
+export const getChannelById = async(id: string): Promise<Channel | undefined> => {
   return await db.get<Channel>(/*sql*/`
     SELECT * FROM channels WHERE id = $1;
   `, [id])

@@ -36,7 +36,7 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
   // const messages = messagez.filter(i => i.channel === s.channel.id)
 
   React.useEffect(() => {
-    console.log("channel (message container) useEffect")
+    console.log("channel state loaded")
   }, [])
 
   const ref = React.useRef<HTMLDivElement>()
@@ -58,16 +58,15 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
 
       if (!ref.current.innerText.length) return
 
-      axios.post('/api/message', {
-        channel: s.id,
-        user: curUser,
-        message: ref.current.innerText,
+      axios.post(`/api/messages/channel/${s.id}`, {
+        author: curUser,
+        content: ref.current.innerText,
       })
         .then(({ data }) => {
           setMessages({
             id: s.id,
             messages: [
-              data.message,
+              data._,
               ...messages?.messages,
             ],
           })
@@ -84,8 +83,8 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
                 id: `${Date.now()}`,
                 author: curUser,
                 channel: s.id,
-                message: ref.current.innerText,
-                date: Date.now(),
+                content: ref.current.innerText,
+                date: String(Date.now()),
                 failed: true,
               },
               ...messages?.messages,

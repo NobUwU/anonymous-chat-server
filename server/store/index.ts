@@ -21,5 +21,8 @@ export const storeTask = async () => {
     driver: sqlite3.verbose().cached.Database,
   })
 
+  // Set Foreign Key Contraints
+  await db.get("PRAGMA foreign_keys = ON;")
+
   await initStore()
 }

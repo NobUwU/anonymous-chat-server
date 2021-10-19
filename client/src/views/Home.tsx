@@ -93,16 +93,16 @@ const Home: FC = () => {
     async function dowit() {
       await attemptLocalUser()
       const userRequest = await axios.get("/api/users")
-      const users: RestUser[] = userRequest.data.users
+      const users: RestUser[] = userRequest.data._
       for (const user of users) {
         addUser(user)
       }
       const channelsRequest = await axios.get("/api/channels")
-      const channels: RestChannel[] = channelsRequest.data.channels
+      const channels: RestChannel[] = channelsRequest.data._
       for (const channel of channels) {
         addChannel(channel)
-        const messageRequest = await axios.get(`/api/messages?channel=${channel.id}`)
-        const messages: RestMessage[] = messageRequest.data.messages
+        const messageRequest = await axios.get(`/api/messages/channel/${channel.id}`)
+        const messages: RestMessage[] = messageRequest.data._
         addMessages({
           id: channel.id,
           messages, 
@@ -112,16 +112,16 @@ const Home: FC = () => {
     }
     async function attemptLocalUser(): Promise<void> {
       if (!currentUser) {
-        const newUser = await axios.post("/api/user", { username: "New User" })
-        setLocalUser(newUser.data.user.id)
+        const newUser = await axios.post("/api/users", { username: "New User" })
+        setLocalUser(newUser.data._.id)
       } else {
         try {
-          const curU = await axios.get(`/api/user?id=${currentUser}`)
-          setLocalUser(curU.data.user.id)
+          const curU = await axios.get(`/api/users/${currentUser}`)
+          setLocalUser(curU.data._.id)
         } catch (error) {
           console.error(error)
-          const newUser = await axios.post("/api/user", { username: "New User" })
-          setLocalUser(newUser.data.user.id)
+          const newUser = await axios.post("/api/users", { username: "New User" })
+          setLocalUser(newUser.data._.id)
         }
       }
 
