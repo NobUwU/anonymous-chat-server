@@ -3,6 +3,7 @@ import { storeTask } from './store'
 const init = async () => {
   await storeTask()
   await import('./network/rest')
+  await import('./network/ws')
 }
 
 init()

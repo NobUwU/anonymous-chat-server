@@ -2,7 +2,7 @@ import {
   Pr_Ipv4,
   Pr_Ipv4Deconstruct,
 } from '@animiru/singularity'
-import C from '../Constants'
+import C from '../../constants'
 
 const singularity = new Pr_Ipv4(C.Epoch)
 

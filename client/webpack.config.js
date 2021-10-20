@@ -1,6 +1,7 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = () => ({
   plugins : [
@@ -14,7 +15,11 @@ module.exports = () => ({
           to: '',
         }
       ]
-    })
+    }),
+    new webpack.DefinePlugin({
+      "NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+      "PORT": JSON.stringify(process.env.PORT),
+    }),
   ],
   module: {
     rules: [
