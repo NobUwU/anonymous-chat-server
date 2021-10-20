@@ -4,13 +4,11 @@ import {
   currentUserState,
   messageState,
 } from '../state/index'
-import {
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { useLocation } from 'react-router-dom'
 import { Hash } from '../components/icons/hash'
 import { Emoji } from '../components/icons/emoji'
+import * as Helpers from '../state/helpers'
 import Message from './Message'
 
 import localforage from 'localforage'
@@ -28,12 +26,10 @@ interface ActualChannelState {
 
 const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
   const channel = useRecoilValue(channelState(s.id))
-  const [messages, setMessages] = useRecoilState(messageState(s.id))
+  const messages = useRecoilValue(messageState(s.id))
   const curUser = useRecoilValue(currentUserState)
+  const addMessage = Helpers.addMessage()
   const location = useLocation()
-  // const [messagez, setMessages] = useRecoilState(messagesState)
-  // const users = useRecoilValue(usersSelector)
-  // const messages = messagez.filter(i => i.channel === s.channel.id)
 
   React.useEffect(() => {
     console.log("channel state loaded")
@@ -59,36 +55,22 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
       if (!ref.current.innerText.length) return
 
       axios.post(`/api/messages/channel/${s.id}`, {
-        author: curUser,
+        author: curUser.id,
         content: ref.current.innerText,
       })
-        .then(({ data }) => {
-          setMessages({
-            id: s.id,
-            messages: [
-              data._,
-              ...messages?.messages,
-            ],
-          })
-
+        .then(() => {
+          // addMessage(s.id, data._)
           ref.current.innerText = ""
         })
         .catch((err) => {
           console.error(err)
-
-          setMessages({
-            id: s.id,
-            messages: [
-              {
-                id: `${Date.now()}`,
-                author: curUser,
-                channel: s.id,
-                content: ref.current.innerText,
-                date: String(Date.now()),
-                failed: true,
-              },
-              ...messages?.messages,
-            ],
+          addMessage(s.id, {
+            id: `${Date.now()}`,
+            author: curUser.id,
+            channel: s.id,
+            content: ref.current.innerText,
+            date: String(Date.now()),
+            failed: true,
           })
 
           ref.current.innerText = ""
@@ -122,7 +104,20 @@ const ActualChannel: React.FC<ActualChannelState> = (s: ActualChannelState) => {
       </div>
       <div className="textbar">
         <div className="textbar-content">
-          <div id="textarea" ref={ref} contentEditable data-placeholder={`Message #${channel.name}`} onKeyDown={handleKeyDown} onInput={handleChange}></div>
+          <div 
+            id="textarea"
+            ref={ref}
+            contentEditable="true"
+            data-placeholder={`Message #${channel.name}`}
+            onKeyDown={handleKeyDown}
+            onInput={handleChange}
+            // Prevent Rich Pastes
+            onPaste={(event) => {
+              event.preventDefault()
+              const text = event.clipboardData.getData('text')
+              document.execCommand('insertTEXT', false, text)
+            }}
+          ></div>
           <div className="emoji">
             <Emoji />
           </div>

@@ -20,11 +20,6 @@ const guardRecoilDefault = (
   return false
 }
 
-export const currentUserState = atom<string>({
-  key: "currentUser",
-  default: "",
-})
-
 export const userFamily = atomFamily<User, string>({
   key: "userState",
   default: undefined,
@@ -104,4 +99,13 @@ export const messageState = selectorFamily<MessageFamily, string>({
     set(messageFamily(id), message)
     set(messageIdState, (prev) => [message.id, ...prev])
   },
+})
+
+export const currentUserState = atom<User>({
+  key: "currentUser",
+  default: undefined,
+})
+export const loadingState = atom<boolean>({
+  key: "loading",
+  default: true,
 })

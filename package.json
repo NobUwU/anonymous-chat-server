@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:client": "cd client && webpack serve --mode=development",
+    "dev:client": "cd client && cross-env NODE_ENV=development webpack serve --mode=development",
     "dev:server": "nodemon --config nodemon.json server/index.ts",
     "build": "npm run build:server && npm run build:client",
     "build:client": "cd client && cross-env NODE_ENV=production webpack --mode production",

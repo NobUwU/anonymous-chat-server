@@ -1,12 +1,11 @@
 import Websocket from 'ws'
 import { construct } from '../../services/id'
-// import { User } from '../../../@types'
-
-const PORT = Number(process.env.PORT) || 6971
+import { rest } from '../rest'
 
 export const server = new Websocket.Server({
-  port: PORT,
+  noServer: true,
 })
+
 export const online: {
   socket: Websocket,
   connectionIdentifier: string
@@ -27,7 +26,7 @@ export function sendEvent<Payload>(socket: Websocket, code: string, payload: Pay
   }))
 }
 
-server.on('connection', (socket, req) => {
+server.on('connection', (socket) => {
   console.log("[Network] [WS]: Socket connection established")
   const connectionIdentifier = construct()
   
@@ -42,4 +41,10 @@ server.on('connection', (socket, req) => {
   })
 })
 
-console.log("[Network]: WS server opened on port:", PORT)
+rest.server.on('upgrade', (req, socket, head) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  server.handleUpgrade(req, socket as any, head, (ws) => {
+    server.emit('connection', ws, req)
+  })
+})
+console.log("[Network]: WS server opened on port:", rest.PORT)

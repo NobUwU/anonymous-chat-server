@@ -71,27 +71,3 @@
     opacity: 0;
   }
 }
-#analogy {
-  max-width: 20rem;
-  max-height: 1rem;
-  text-align: center;
-  font-weight: 100;
-  font-family: 'ChivoLight', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  animation: animin 1s ease;
-  @keyframes animin {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  p {
-    opacity: 1;
-    transition: opacity 1s ease;
-    &.out {
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-  }
-}

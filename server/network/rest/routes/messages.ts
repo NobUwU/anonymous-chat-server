@@ -8,6 +8,8 @@ import {
   createMessage,
 } from '../../../services/message'
 import { newMessage } from '../../../validation/message'
+import { broadcast } from '../../ws'
+import { MESSAGE_CREATE } from '../../../../events'
 
 router.get("/:id", (req, res) => {
   getMessageById(req.params.id)
@@ -68,6 +70,8 @@ router.post("/channel/:id", (req, res) => {
 
   createMessage(req.params.id, validate.value.author, validate.value.content)
     .then((result) => {
+      broadcast(MESSAGE_CREATE, result)
+
       return res.status(200)
         .json({
           msg: "Resource successfully created!",

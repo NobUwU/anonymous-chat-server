@@ -1,146 +1,111 @@
-import React, {
-  FC,
-  useState,
-  useRef,
-  useEffect,
-} from 'react'
+import React from 'react'
 import {
-  userState,
-  channelState,
-  messageState,
-  currentUserState,
-} from '../state/index'
-import {
-  User as RestUser,
-  Message as RestMessage,
-  Channel as RestChannel,
-  MessageFamily,
-} from '../../../@types'
-import {
-  useRecoilState,
-  useRecoilCallback,
-} from 'recoil'
+  MESSAGE_CREATE,
+} from '../../../events'
+import { loadingState } from '../state/index'
+import { useRecoilValue } from 'recoil'
 import { Chevron } from '../components/icons/chevron'
+import { startConnection } from '../network'
+import { emitter } from '../network/events'
+import { Message } from '../../../@types'
+import * as Helpers from '../state/helpers'
 import axios from 'axios'
 
 import Loader from '../components/Loader'
 import Navbar from '../components/Navbar'
 import Channel from '../components/Channel'
+import Analogy from '../components/Analogy'
 
 import "./Home.scss"
 
-const analogy = [
-  "When you say 'Forward' or 'Back', your lips move in those directions.",
-  "People who are goodlooking but have terrible personalities are basically real life click baits.",  
-  "The Japanese flag could actually be a pie chart of how much of Japan is Japan.",
-  "When you clean out a vacuum cleaner, you become a vacuum cleaner.",
-  "Beef jerky is basically a meat raisin.",
-  "Holes are completely empty, yet wholes are completely full.",
-  "Every truck is a food truck if you're a cannibal.",
-  `Why do people say "tuna fish" when they don't say "beef mammal" or "chicken bird"?`,
-  "Why aren't iPhone chargers called apple juice?",
-]
+const localUserId = localStorage.getItem("uid")
 
+const Home: React.FC = () => {
+  const load = useRecoilValue(loadingState)
+  const [open, setOpen] = React.useState<boolean>(false)
+  const setCurrentUser = Helpers.setCurrentUser()
+  const addUser = Helpers.addUser()
+  const addChannel = Helpers.addChannel()
+  const setMessages = Helpers.setChannelMessages()
+  const addMessages = Helpers.addMessage()
+  const attemptConnection = startConnection()
 
-const Analogy: FC<{ items: string[] }> = (s: { items: string[] }) => {
-  const [j, cj] = useState<string>(s.items[Math.floor(Math.random() * s.items.length)])
+  const opener = React.useRef<HTMLDivElement>()
+  const nav = React.useRef<HTMLDivElement>()
 
-  const ref = useRef<HTMLDivElement>()
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      ref.current?.classList.add("out")
-      setTimeout(() => {
-        const cur = s.items.indexOf(j)
-        let next = s.items[cur + 1]
-        if (!next) next = s.items[0]
-
-        cj(next)
-        ref.current?.classList.remove("out")
-      }, 1100)
-    }, 5000)
-
-    return () => clearTimeout(timeout)
-  }, [j])
-
-  return (
-    <div id="analogy">
-      <p ref={ref}>{j}</p>
-    </div>
-  )
-}
-
-const Home: FC = () => {
-  const [l, setL] = useState<boolean>(true)
-  const [, setCU] = useRecoilState(currentUserState)
-  const [open, setOpen] = useState<boolean>(false)
-  const currentUser = localStorage.getItem("uid")
-
-  const opener = useRef<HTMLDivElement>()
-  const nav = useRef<HTMLDivElement>()
-  const loading = useRef<HTMLDivElement>()
- 
-  const addUser = useRecoilCallback(({ set }) => (user: RestUser) => {
-    set(userState(user.id), user)
-  })
-  const addChannel = useRecoilCallback(({ set }) => (channel: RestChannel) => {
-    set(channelState(channel.id), channel)
-  })
-  const addMessages = useRecoilCallback(({ set }) => (messages: MessageFamily) => {
-    set(messageState(messages.id), messages)
-  })
-
-  useEffect(() => {
-    async function dowit() {
+  React.useEffect(() => {
+    async function main() {
       await attemptLocalUser()
-      const userRequest = await axios.get("/api/users")
-      const users: RestUser[] = userRequest.data._
-      for (const user of users) {
-        addUser(user)
-      }
+      await fillUsers()
+      await fillChannels()
+      await attemptConnection()
+    }
+
+    async function fillChannels(): Promise<void> {
       const channelsRequest = await axios.get("/api/channels")
-      const channels: RestChannel[] = channelsRequest.data._
+      const channels = channelsRequest.data._
       for (const channel of channels) {
         addChannel(channel)
         const messageRequest = await axios.get(`/api/messages/channel/${channel.id}`)
-        const messages: RestMessage[] = messageRequest.data._
-        addMessages({
+        const messages = messageRequest.data._
+        setMessages({
           id: channel.id,
-          messages, 
+          messages,
         })
       }
-      isReady()
+
+      return Promise.resolve()
     }
+
+    async function fillUsers(): Promise<void> {
+      const userRequest = await axios.get("/api/users")
+      const users = userRequest.data._
+      for (const user of users) {
+        addUser(user)
+      }
+
+      return Promise.resolve()
+    }
+
     async function attemptLocalUser(): Promise<void> {
-      if (!currentUser) {
+      if (!localUserId) {
         const newUser = await axios.post("/api/users", { username: "New User" })
-        setLocalUser(newUser.data._.id)
+        setCurrentUser(newUser.data._)
       } else {
         try {
-          const curU = await axios.get(`/api/users/${currentUser}`)
-          setLocalUser(curU.data._.id)
+          const curU = await axios.get(`/api/users/${localUserId}`)
+          setCurrentUser(curU.data._)
         } catch (error) {
           console.error(error)
           const newUser = await axios.post("/api/users", { username: "New User" })
-          setLocalUser(newUser.data._.id)
+          setCurrentUser(newUser.data._)
         }
       }
 
       return
     }
-    function setLocalUser(id: string): void {
-      localStorage.setItem('uid', id)
-      setCU(id)
-    }
-    function isReady() {
+
+    main().catch(console.error)
+  }, [])
+
+  // Websocket Connection Handler
+  React.useEffect(() => {
+    function onClose() {
       setTimeout(() => {
-        loading.current?.classList.add("anim-out")
-        setTimeout(() => {
-          setL(false)
-        }, 1100)
+        attemptConnection().catch(console.error)
       }, 2000)
     }
+    function onMessage(msg: Message) {
+      addMessages(msg.channel, msg)
+    }
 
-    dowit().catch(console.error)
+    emitter.on('ws_closed', onClose)
+    emitter.on(MESSAGE_CREATE, onMessage)
+
+    return () => {
+      emitter.removeListener('ws_closed', onClose)
+      emitter.removeListener(MESSAGE_CREATE, onMessage)
+    }
   }, [])
 
   function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -150,10 +115,10 @@ const Home: FC = () => {
   return (
     <div id="home">
       {
-        l
-          ? <div id="loading-screen" ref={loading}>
+        load
+          ? <div id="loading-screen">
             <Loader />
-            <Analogy items={analogy} />
+            <Analogy />
           </div>
           : ""
       }
