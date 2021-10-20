@@ -55,13 +55,6 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
   const date = new Date(parseInt(s.message.date))
   const [user, setUser] = useRecoilState(userState(s.message.author))
 
-  if (!user) setUser({
-    id: s.message.author,
-    username: "Unknown User",
-    avatar: "/static/logo.png",
-    temp: true,
-  })
-
   React.useEffect(() => {
     console.log("message state loaded")
   }, [])
@@ -69,13 +62,13 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
   React.useEffect(() => {
     async function attemptUser(): Promise<void> {
       try {
-        const attemptUnknown = await axios.get(`/api/user?id=${s.message.author}`)
-        setUser(attemptUnknown.data.user)
+        const attemptUnknown = await axios.get(`/api/users/${s.message.author}`)
+        setUser(attemptUnknown.data._)
       } catch (error) {
         console.error(error)
       }
     }
-    if (user.temp) {
+    if (!user) {
       attemptUser()
     }
   }, [])
@@ -84,13 +77,13 @@ const Message: React.FC<MessageState> = (s: MessageState) => {
     <div id="message">
       <div className="info">
         <div className="avatar">
-          <img src={user.avatar} alt={user.username} />
+          <img src={user?.avatar || "/static/logo.png"} alt={user?.username || "Unknown User"} />
         </div>
         <div className="content">
           <div className="user-info">
-            <h3 style={user.color ? { color: user.color } : {}}>{user.username}</h3>
+            <h3 style={user?.color ? { color: user?.color } : {}}>{user?.username || "Unknown User"}</h3>
             {
-              user.server
+              user?.server
                 ? <div id="mini-tag" className="server">
                   <p>SERVER</p>
                 </div>
