@@ -53,6 +53,8 @@
         }
       }
       .message {
+        word-wrap: break-word;
+        word-break: break-word;
         min-width: 100%;
         margin-top: 0.2rem;
         font-family: 'Chivo', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
