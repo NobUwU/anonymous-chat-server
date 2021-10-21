@@ -22,6 +22,7 @@ export function send<Payload>(code: string, payload: Payload): void {
   })
   if (client && client.OPEN) {
     client.send(event)
+    console.log(`SENDING PAYLOAD:`, `[${code}]`, payload)
   }
 }
 
