@@ -15,6 +15,16 @@ const connectionUri = `${location.protocol === "https:" ? "wss:" : "ws:"}//${hos
 
 let reconAttempts = 0
 
+export function send<Payload>(code: string, payload: Payload): void {
+  const event = JSON.stringify({
+    code,
+    payload,
+  })
+  if (client && client.OPEN) {
+    client.send(event)
+  }
+}
+
 export function startConnection(): () => Promise<void> {
   const loadOn = Helpers.setLoading()
   const loadOff = Helpers.stopLoading()
@@ -49,3 +59,8 @@ export function startConnection(): () => Promise<void> {
     })
   }), [])
 }
+
+// Keep connection alive
+setInterval(() => {
+  send("PING", {})
+}, 15 * 1000)
