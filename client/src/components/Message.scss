@@ -1,6 +1,11 @@
 #message {
+  // position: relative;
+  // &:hover {
+  //   background-color: #00000018;
+  // }
   // overflow: hidden;
   .info {
+    padding: 0rem 1rem 0rem 1rem;
     overflow: hidden;
     display: flex;
     flex-direction: row;
@@ -56,6 +61,7 @@
         word-wrap: break-word;
         word-break: break-word;
         min-width: 100%;
+        padding-right: 5rem;
         margin-top: 0.2rem;
         font-family: 'Chivo', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         color: #d4d4d4;
